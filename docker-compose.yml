@@ -1,0 +1,29 @@
+services:
+  i2pd:
+    image: purplei2p/i2pd
+    cap_drop:
+      - ALL
+    ports:
+      - 17070:17070 # Web console port.
+#      - 9000-31000:9000-31000/udp # P2P ports, speed up things a lot. Viable only if host has a public IPv4/IPv6 address. If you leave this commented, your network in web console will show up as "Firewalled".
+    volumes:
+      - ./configs/i2p:/home/i2pd/data # All the private I2Pd keys are kept here.
+      - ./configs/i2pd.conf:/home/i2pd/data/i2pd.conf:ro
+      - ./configs/tunnels.conf:/home/i2pd/data/tunnels.conf:ro
+    restart: unless-stopped
+    stop_grace_period: 0s
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./configs/nginx-default.conf:/etc/nginx/conf.d/default.conf
+      - ./eepsite:/var/www/eepsite
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - CHOWN
+      - NET_BIND_SERVICE
+    restart: unless-stopped
+    stop_grace_period: 0s
