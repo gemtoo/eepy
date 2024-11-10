@@ -11,6 +11,11 @@ services:
       - ./configs/i2pd.conf:/home/i2pd/data/i2pd.conf:ro
       - ./configs/tunnels.conf:/home/i2pd/data/tunnels.conf:ro
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '2048M'
     stop_grace_period: 0s
 
   nginx:
